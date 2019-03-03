@@ -2,7 +2,7 @@
 React websocket High Order Component with @stomp/stompjs (V5) over SockJS
 
 # Introduction
-I need an updated STOMP client to work with latest version of React Native, but it probably works in Browser as well.
+I need an updated STOMP client to work with latest version of React Native, it probably works in Browser as well.
 
 It exposed the global STOMP client to the react components with HOC 
 
@@ -33,17 +33,17 @@ const StompEventTypes = {
     WebSocketError: 4,
 }
 
-this.props.addStompEventListener(eventType: StompEventTypes, emitted: function, context, isOnce)
-this.props.removeStompEventListener(eventType: StompEventTypes, emitted: function, context)
+this.props.stompContext.addStompEventListener(eventType: StompEventTypes, emitted: function, context, isOnce)
+this.props.stompContext.removeStompEventListener(eventType: StompEventTypes, emitted: function, context)
 ```
 And create/destroy the client
 ```javascript
-this.props.newStompClient(server_path, username, passcode, host)
-this.props.removeStompClient()
+this.props.stompContext.newStompClient(server_path, username, passcode, host)
+this.props.stompContext.removeStompClient()
 ```
 You could access the [Client](https://stomp-js.github.io/api-docs/latest/classes/Client.html) directly ( Subscribe and unsubscribe etc )
 ```javascript
-let rootSubscribed = this.props.stompClient.subscribe('/', (message) => {console.log(message.body)})
+let rootSubscribed = this.props.stompContext.stompClient.subscribe('/', (message) => {console.log(message.body)})
 rootSubscribed.unsubscribe()
 ```
 

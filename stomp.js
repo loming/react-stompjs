@@ -112,8 +112,8 @@ const withStomp = (Component) => (
                 stompClient: PropTypes.instanceOf(Client),
                 newStompClient: PropTypes.func,
                 removeStompClient: PropTypes.func,
-                addEventListener: PropTypes.func,
-                removeEventListener: PropTypes.func,
+                addStompEventListener: PropTypes.func,
+                removeStompEventListener: PropTypes.func,
             })
         }
 

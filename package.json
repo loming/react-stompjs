@@ -1,6 +1,6 @@
 {
   "name": "react-stompjs",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "React websocket High Order Component with @stomp/stompjs (V5) over SockJS",
   "main": "./stomp.js",
   "repository": {
