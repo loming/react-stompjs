@@ -25,7 +25,8 @@ const StompEventTypes = {
     Connect: 0,
     Disconnect: 1,
     Error: 2,
-    WebSocketError: 3,
+    WebSocketClose: 3,
+    WebSocketError: 4,
 }
 
 
@@ -37,7 +38,7 @@ const newStompClient = (url, login, passcode, host) => {
         brokerURL: url,
         connectHeaders: {login, passcode, host},
         debug: (str) => {
-            // logger.log(str)
+            logger.log(str)
         },
         reconnectDelay: 500,
         heartbeatIncoming: 4000,
@@ -59,6 +60,10 @@ const newStompClient = (url, login, passcode, host) => {
             logger.log('Stomp Disconnect', frame)
             stompEvent.emit(StompEventTypes.Disconnect, frame)
         },
+        onWebSocketClose: (frame) => {
+            logger.log('Stomp WebSocket Closed', frame)
+            stompEvent.emit(StompEventTypes.WebSocketClose, frame)
+        },
         onWebSocketError: (frame) => {
             logger.log('Stomp WebSocket Error', frame)
             stompEvent.emit(StompEventTypes.WebSocketError, frame)
@@ -79,7 +84,7 @@ const removeStompClient = () => {
     }
 }
 
-const addEventListener = (eventType, emitted, context, isOnce) => {
+const addStompEventListener = (eventType, emitted, context, isOnce) => {
     if (isOnce) {
         stompEvent.once(eventType, emitted, context)
     } else {
@@ -87,23 +92,20 @@ const addEventListener = (eventType, emitted, context, isOnce) => {
     }
 }
 
-const removeEventListener = (eventType, emitted, context) => {
+const removeStompEventListener = (eventType, emitted, context) => {
     stompEvent.removeListener(eventType, emitted, context)
 }
 
 
 
 // React Context and our functions
-const stompContextDefault = {
-    stompClient, newStompClient, removeStompClient, addEventListener, removeEventListener
+const stompContext = {
+    stompClient, newStompClient, removeStompClient, addStompEventListener, removeStompEventListener
 }
 
-const StompContext = React.createContext(stompContextDefault)
-
-
-const withStompContext = (Component) => (
+const withStomp = (Component) => (
     (props) => {
-        const wrapped = (context) => (<Component stompContext={context} {...props} />)
+        const wrapped = <Component stompContext={stompContext} {...props} />
 
         wrapped.propTypes = {
             stompContext: PropTypes.shape({
@@ -115,15 +117,14 @@ const withStompContext = (Component) => (
             })
         }
 
-        return (<StompContext.Consumer>{(context) => wrapped(context)}</StompContext.Consumer>)
+        return wrapped
     }
 )
 
-withStompContext.propTypes = {
+withStomp.propTypes = {
     Component: PropTypes.element,
 }
 
 
 // Exports
-export default StompContext
-export {StompEventTypes, stompContextDefault, withStompContext}
+export {StompEventTypes, withStomp}
