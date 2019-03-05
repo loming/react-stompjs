@@ -43,7 +43,7 @@ this.props.stompContext.removeStompClient()
 ```
 You could access the [Client](https://stomp-js.github.io/api-docs/latest/classes/Client.html) directly ( Subscribe and unsubscribe etc )
 ```javascript
-let rootSubscribed = this.props.stompContext.stompClient.subscribe('/', (message) => {console.log(message.body)})
+let rootSubscribed = this.props.stompContext.getStompClient().subscribe('/', (message) => {console.log(message.body)})
 rootSubscribed.unsubscribe()
 ```
 

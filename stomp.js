@@ -15,7 +15,7 @@ if (typeof TextEncoder !== 'function') {
 
 
 // Stomp client
-let stompClient = null
+let _stompClient = null
 
 const logger = console // Use any logger you want here
 const stompEvent = new EventEmitter()
@@ -34,7 +34,7 @@ const newStompClient = (url, login, passcode, host) => {
     logger.log('Stomp trying to connect', url, login, passcode, host)
 
     // let socket = SockJS(url)
-    stompClient = new Client({
+    _stompClient = new Client({
         brokerURL: url,
         connectHeaders: {login, passcode, host},
         debug: (str) => {
@@ -70,17 +70,17 @@ const newStompClient = (url, login, passcode, host) => {
         },
     })
 
-    stompClient.activate()
+    _stompClient.activate()
 
-    return stompClient
+    return _stompClient
 }
 
 const removeStompClient = () => {
-    if(stompClient) {
+    if(_stompClient) {
         logger.log('Stomp trying to disconnect')
-        stompClient.deactivate()
+        _stompClient.deactivate()
 
-        stompClient = null
+        _stompClient = null
     }
 }
 
@@ -96,11 +96,13 @@ const removeStompEventListener = (eventType, emitted, context) => {
     stompEvent.removeListener(eventType, emitted, context)
 }
 
-
+const getStompClient = () => {
+    return _stompClient
+}
 
 // React Context and our functions
 const stompContext = {
-    stompClient, newStompClient, removeStompClient, addStompEventListener, removeStompEventListener
+    getStompClient, newStompClient, removeStompClient, addStompEventListener, removeStompEventListener
 }
 
 const withStomp = (Component) => (
@@ -109,7 +111,7 @@ const withStomp = (Component) => (
 
         wrapped.propTypes = {
             stompContext: PropTypes.shape({
-                stompClient: PropTypes.instanceOf(Client),
+                getStompClient: PropTypes.func,
                 newStompClient: PropTypes.func,
                 removeStompClient: PropTypes.func,
                 addStompEventListener: PropTypes.func,
